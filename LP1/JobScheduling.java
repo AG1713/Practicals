@@ -54,31 +54,6 @@ class Solution{
         }
     }
 
-    public void sortBasedOnBurstTime(){
-        // insertion sort
-        for (int i=1 ; i<num_processes ; i++){
-            int burst_time = burst_times[i];
-
-            String process = processes[i];
-            int arrival_time = arrival_times[i];
-            // The above are all keys
-
-            int j = i-1;
-
-            while (j >= 0 && burst_times[j] > burst_time) {
-                burst_times[j+1] = burst_times[j];
-
-                processes[j+1] = processes[j];
-                arrival_times[j+1] = arrival_times[j];
-                j--;
-            }
-            burst_times[j+1] = burst_time;
-            processes[j+1] = process;
-            arrival_times[j+1] = arrival_time;
-        }
-    }
-
-
     public void takeInputs(){
 
         for (int i=0 ; i<num_processes ; i++){
@@ -95,7 +70,6 @@ class Solution{
 
     public void calculateTimesFCFS(){
 
-//        sortBasedOnBurstTime();
         sortBasedOnArrival();
 
         for (int i=0 ; i<num_processes ; i++){
@@ -118,22 +92,6 @@ class Solution{
         avg_waiting_time = avg_waiting_time/num_processes;
 
     }
-
-    public void displayTable(){
-        System.out.println("Process\t\tArrival Time\tBurst time\tCompletion time\tTurn around time\tWaiting time");
-        System.out.println("--------------------------------------------------------------------------------------");
-
-        for (int i=0 ; i<num_processes ; i++){
-            System.out.println(processes[i] + "\t\t\t" + arrival_times[i] + "ms\t\t\t\t" +
-                    burst_times[i] + "ms\t\t\t" + completion_times[i] + "ms\t\t\t" + TAT[i] + "ms\t\t\t" + waiting_times[i]);
-
-        }
-
-        System.out.println("Average turn around time : " + avg_TAT + "ms");
-        System.out.println("Average waiting time : " + avg_waiting_time + "ms");
-
-    }
-
 
     public void calculateTimesSJF(){
         sortBasedOnArrival();
@@ -181,29 +139,84 @@ class Solution{
 
 
 
+
+    public void displayTable(){
+        System.out.println("\n\nProcess\t\tArrival Time\t\tBurst time\t\tCompletion time\t\tTurn around time\t\tWaiting time");
+        System.out.println("--------------------------------------------------------------------------------------");
+
+        for (int i=0 ; i<num_processes ; i++){
+            System.out.println(processes[i] + "\t\t\t" + arrival_times[i] + "ms\t\t\t\t" +
+                    burst_times[i] + "ms\t\t\t" + completion_times[i] + "ms\t\t\t" + TAT[i] + "ms\t\t\t" + waiting_times[i]);
+
+        }
+
+        System.out.println("Average turn around time : " + avg_TAT + "ms");
+        System.out.println("Average waiting time : " + avg_waiting_time + "ms");
+
+    }
+
+
 }
 
 
 public class JobScheduling {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int num_processes = 0;
+        int num_processes;
+        int choice = 0;
 
-        System.out.print("Enter the number of processes : ");
-        num_processes = sc.nextInt();
 
-        Solution solution = new Solution(num_processes);
+        System.out.println("Enter option :\n1) FCFS\n2) SJF");
+        choice = sc.nextInt();
 
-        solution.takeInputs();
-        solution.calculateTimesSJF();
-        solution.displayTable();
+        Solution solution;
 
+
+
+        switch (choice) {
+            case 1:
+                num_processes = 0;
+
+                System.out.print("Enter the number of processes : ");
+                num_processes = sc.nextInt();
+                solution = new Solution(num_processes);
+
+                solution.takeInputs();
+                solution.calculateTimesFCFS();
+                solution.displayTable();
+
+                break;
+
+            case 2:
+                num_processes = 0;
+
+                System.out.print("Enter the number of processes : ");
+                num_processes = sc.nextInt();
+                solution = new Solution(num_processes);
+
+
+                solution.takeInputs();
+                solution.calculateTimesSJF();
+                solution.displayTable();
+
+                break;
+
+            default:
+                System.out.println("Invalid Choice");
+                break;
+        }
 
 
 
         sc.close();
 
-        // 5 1 3 0 4 2 3 3 2 4 5
+
+        // Sample inputs
+        // FCFS - 5 0 4 1 3 2 1 3 2 4 5
+        // Average waiting time - 3.8
+
+        // SJF - 4 0 6 1 4 2 2 3 3
+        // Average waiting time - 3.75
 
 
     }
