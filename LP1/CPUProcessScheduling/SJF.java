@@ -1,7 +1,7 @@
+package CPUProcessScheduling;
 import java.util.*;
 
-
-class Solution{
+class ShortestJobFirst{
     Scanner sc1 = new Scanner(System.in);
 
     private int num_processes;
@@ -11,13 +11,10 @@ class Solution{
     private int completion_times[];
     private int TAT[];
     private int waiting_times[];
-
     private float avg_TAT;
     private float avg_waiting_time;
 
-
-
-    Solution(int num_processes){
+    ShortestJobFirst(int num_processes){
         this.num_processes = num_processes;
 
         processes = new String[num_processes];
@@ -55,7 +52,6 @@ class Solution{
     }
 
     public void takeInputs(){
-
         for (int i=0 ; i<num_processes ; i++){
             processes[i] = "P" + String.valueOf(i+1);
 
@@ -69,7 +65,6 @@ class Solution{
     }
 
     public void calculateTimesFCFS(){
-
         sortBasedOnArrival();
 
         for (int i=0 ; i<num_processes ; i++){
@@ -149,76 +144,29 @@ class Solution{
                     burst_times[i] + "ms\t\t\t" + completion_times[i] + "ms\t\t\t" + TAT[i] + "ms\t\t\t" + waiting_times[i]);
 
         }
-
         System.out.println("Average turn around time : " + avg_TAT + "ms");
         System.out.println("Average waiting time : " + avg_waiting_time + "ms");
-
     }
-
-
 }
 
 
-public class JobScheduling {
+public class SJF {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int num_processes;
-        int choice = 0;
+        num_processes = 0;
+        ShortestJobFirst solution;
 
+        System.out.print("Enter the number of processes : ");
+        num_processes = sc.nextInt();
+        solution = new ShortestJobFirst(num_processes);
 
-        System.out.println("Enter option :\n1) FCFS\n2) SJF");
-        choice = sc.nextInt();
-
-        Solution solution;
-
-
-
-        switch (choice) {
-            case 1:
-                num_processes = 0;
-
-                System.out.print("Enter the number of processes : ");
-                num_processes = sc.nextInt();
-                solution = new Solution(num_processes);
-
-                solution.takeInputs();
-                solution.calculateTimesFCFS();
-                solution.displayTable();
-
-                break;
-
-            case 2:
-                num_processes = 0;
-
-                System.out.print("Enter the number of processes : ");
-                num_processes = sc.nextInt();
-                solution = new Solution(num_processes);
-
-
-                solution.takeInputs();
-                solution.calculateTimesSJF();
-                solution.displayTable();
-
-                break;
-
-            default:
-                System.out.println("Invalid Choice");
-                break;
-        }
-
-
-
-        sc.close();
-
-
-        // Sample inputs
-        // FCFS - 5 0 4 1 3 2 1 3 2 4 5
-        // Average waiting time - 3.8
+        solution.takeInputs();
+        solution.calculateTimesSJF();
+        solution.displayTable();
 
         // SJF - 4 0 6 1 4 2 2 3 3
         // Average waiting time - 3.75
-
-
+        sc.close();
     }
-
 }
