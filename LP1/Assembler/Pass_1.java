@@ -1,183 +1,120 @@
 package Assembler;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-class Solution{
-    private String[] IS = {"STOP","ADD","SUB","MULT","MOVER","MOVEM","COMP","BC","DIV","READ","PRINT"};
-    private String[] AD = {"","START","END","ORIGIN","EQU","LTORG"};
-    private String[] DL = {"","DS","DC"};
-    private String[] CC = {"","CC","LT","GT","LE","GE","NE","ANY"};
-    private String[] RG = {"","AREG","BREG","CREG"};
-    private int LC = -1; // LC denotes current line, and not next
+class MnemonicEntry{
+    String mnemonicClass;
+    String opcode;
 
+    public MnemonicEntry(String mnemonicClass, String opcode) {
+        this.mnemonicClass = mnemonicClass;
+        this.opcode = opcode;
+    }
+}
+class Token{
+    String name;
+    String tokenClass;
+    String address;
+}
+
+
+class Solution {
+    HashMap<String, MnemonicEntry> MOT;
+    ArrayList<Token> symbolTable;
+    ArrayList<Token> literalTable;
     BufferedReader input;
     BufferedWriter output;
-    BufferedWriter symbol_table;
-    HashMap<String,Integer> symbols;
-    BufferedWriter literal_table;
-    HashMap<String,Integer> literals;
-    BufferedWriter pool_table;
+    int LC;
 
     Solution(){
+        MOT = new HashMap<>();
+        symbolTable = new ArrayList<>();
+        literalTable = new ArrayList<>();
+        // Opening input and output files
         try {
-            // Opening input and output files
             input = new BufferedReader(new FileReader("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\Assembler\\Input"));
             output = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\Assembler\\Intermediate_code"));
-
-            symbol_table = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\Assembler\\Symbol_table"));
-            literal_table = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\Assembler\\Literal_table"));
-            pool_table = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\Assembler\\Pool_table"));
-
-            symbols = new HashMap<>();
-            literals = new HashMap<>();
-
-
         } catch (IOException e) {
-            System.out.println(e.getMessage());;
+            throw new RuntimeException(e);
         }
+
+        MOT.put("STOP", new MnemonicEntry("IS", "00"));
+        MOT.put("ADD", new MnemonicEntry("IS", "01"));
+        MOT.put("SUB", new MnemonicEntry("IS", "02"));
+        MOT.put("MULT", new MnemonicEntry("IS", "03"));
+        MOT.put("MOVER", new MnemonicEntry("IS", "04"));
+        MOT.put("MOVEM", new MnemonicEntry("IS", "05"));
+        MOT.put("COMP", new MnemonicEntry("IS", "06"));
+        MOT.put("BC", new MnemonicEntry("IS", "07"));
+        MOT.put("DIV", new MnemonicEntry("IS", "08"));
+        MOT.put("READ", new MnemonicEntry("IS", "09"));
+        MOT.put("PRINT", new MnemonicEntry("IS", "10"));
+
+        MOT.put("START", new MnemonicEntry("AD", "01"));
+        MOT.put("END", new MnemonicEntry("AD", "02"));
+        MOT.put("ORIGIN", new MnemonicEntry("AD", "03"));
+        MOT.put("EQU", new MnemonicEntry("AD", "04"));
+        MOT.put("LTORG", new MnemonicEntry("AD", "05"));
+
+        MOT.put("DS", new MnemonicEntry("DL", "01"));
+        MOT.put("DC", new MnemonicEntry("DL", "02"));
+
+        MOT.put("AREG", new MnemonicEntry("RG", "01"));
+        MOT.put("BREG", new MnemonicEntry("RG", "02"));
+        MOT.put("CREG", new MnemonicEntry("RG", "03"));
+
+        MOT.put("EQ", new MnemonicEntry("CC", "01"));
+        MOT.put("LT", new MnemonicEntry("CC", "02"));
+        MOT.put("GT", new MnemonicEntry("CC", "03"));
+        MOT.put("LE", new MnemonicEntry("CC", "04"));
+        MOT.put("GE", new MnemonicEntry("CC", "05"));
+        MOT.put("NE", new MnemonicEntry("CC", "06"));
+        MOT.put("ANY", new MnemonicEntry("CC", "07"));
     }
 
-    private String[] getClassAndOpcode(String operator){
-        String[] ans = new String[2];
-        ans[0] = "";
-        ans[1] = "";
-
-        // Searching through all arrays
-        System.out.println(operator);
-        for (int i=0 ; i<IS.length ; i++){
-            if (IS[i].equals(operator)){
-                ans[0] = "IS";
-                ans[1] = String.valueOf(i);
-                return ans;
-            }
-        }
-        for (int i=1 ; i<AD.length ; i++){
-            if (AD[i].equals(operator)){
-                ans[0] = "AD";
-                ans[1] = String.valueOf(i);
-                return ans;
-            }
-        }
-        for (int i=1 ; i<DL.length ; i++){
-            if (IS[i].equals(operator)){
-                ans[0] = "DL";
-                ans[1] = String.valueOf(i);
-                return ans;
-            }
-        }
-        for (int i=1 ; i<CC.length ; i++){
-            if (IS[i].equals(operator)){
-                ans[0] = "CC";
-                ans[1] = String.valueOf(i);
-                return ans;
-            }
-        }
-        System.out.println("Not found : " + operator);
-
-        return ans;
-    }
-
-    private String[] getRegisterOpcode(String register){
-        String[] ans = new String[2];
-        ans[0] = "";
-        ans[1] = "";
-
-        for (int i=1 ; i<RG.length ; i++){
-            if (RG[i].equals(register)){
-                ans[0] = "RG";
-                ans[1] = String.valueOf(i);
-                return ans;
-            }
-        }
-
-        return ans;
-    }
-
-    // ********************************************************************************************************
-
-
-    public void generateIntermediateCode() throws IOException{
+    void generateIntermediateCode() throws IOException {
         String card = input.readLine();
         if (!card.startsWith("START")) return; // If it does not start with start
         String[] parts = card.split(" ");
         LC = Integer.parseInt(parts[1]);
 
+        // Reading second line (Non-start)
+        card = input.readLine();
+        parts = card.split(" ");
 
         while (!card.equals("END")){
-            LC ++;
+            LC++;
+
+
+            if (MOT.containsKey(parts[0])){
+                MnemonicEntry mnemonicEntry = MOT.get(parts[0]);
+                output.write("(" + mnemonicEntry.mnemonicClass + "," + mnemonicEntry.opcode + ")");
+
+
+
+
+            }
+
+
             card = input.readLine();
             parts = card.split(" ");
-
-            // Getting operators
-            String[] classAndOpcode = getClassAndOpcode(parts[0]);
-            int operands_begin = 1;
-            if (classAndOpcode[0].isEmpty()){
-                // Means it is a label
-
-                symbol_table.write(parts[0] + " " + LC);
-                symbol_table.newLine();
-                symbol_table.flush();
-                if (!symbols.containsKey(parts[0])) symbols.put(parts[0],LC);
-                else {
-                    // BC or DL statements
-                }
-
-                classAndOpcode = getClassAndOpcode(parts[1]);
-                operands_begin = 1;
-            }
-            output.write("(" + classAndOpcode[0] + "," + classAndOpcode[1] + ") ");
-
-            // Getting operands
-            for (int i=operands_begin ; i< parts.length ; i++){
-                String[] operand_details = new String[2];
-                operand_details[0] = "";
-                operand_details[1] = "";
-
-                if (symbols.containsKey(parts[i])){
-                    operand_details[0] = "S";
-//                    operand_details[1] = String.valueOf(symbols.);
-                } else if (literals.containsKey(parts[i])) {
-                    operand_details[0] = "L";
-//                    operand_details[1] = String.get
-                }
-
-            }
-
-
-
-
-
-
-            output.write("(");
-            output.newLine();
-            output.flush();
-
-
-
         }
 
 
+
     }
+
+
 
 
 
 }
 
+
+
 public class Pass_1 {
-
-
-
-    public static void main(String[] args) {
-        Solution s = new Solution();
-        try {
-            s.generateIntermediateCode();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
 
 
 }
