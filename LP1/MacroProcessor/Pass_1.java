@@ -8,6 +8,7 @@ class Solution {
     BufferedWriter MNT;
     BufferedWriter MDT;
     BufferedWriter temp;
+    BufferedWriter IC;
 
     int mntc;
     int mdtp;
@@ -17,6 +18,7 @@ class Solution {
         input = new BufferedReader(new FileReader("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\MacroProcessor\\input"));
         MNT = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\MacroProcessor\\MNT"));
         MDT = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\MacroProcessor\\MDT"));
+        IC = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\MacroProcessor\\IC"));
 
         mntc = 0;
         mdtp = 0;
@@ -26,15 +28,12 @@ class Solution {
 
     public void generateOutput() throws IOException {
         String card = input.readLine();
-        boolean flag = false; // Denotes whether we are in a MACRO or out
 
         while (!card.contains("START")){
             if (!card.equals("MACRO")){
                 card = input.readLine();
                 continue;
             }
-
-            flag = true; // Inside a MACRO function
 
             card = input.readLine();
 //            card.replaceAll("[&,]","");
@@ -58,15 +57,13 @@ class Solution {
                 temp.flush();
             }
 
-            System.out.println(flag);
-            while (flag) {
+            while (true) {
                 card = input.readLine();
                 mdtp++;
 
                 if (card.equals("MEND")){
                     MDT.write("MEND\n");
                     MDT.flush();
-                    flag = false;
                     break;
                 }
 
@@ -76,6 +73,15 @@ class Solution {
 
             card = input.readLine();
         }
+
+        // The card now contains START
+        while (!card.equals("END")){
+            IC.write(card + "\n");
+            IC.flush();
+            card = input.readLine();
+        }
+        IC.write("END");
+        IC.flush();
 
     }
 
