@@ -124,6 +124,19 @@ public class FCFS {
         // FCFS - 5 0 4 1 3 2 1 3 2 4 5
         // Average waiting time - 3.8
 
+        // Output:
+        /*
+        Process		Arrival Time		Burst time		Completion time		Turn around time		Waiting time
+        --------------------------------------------------------------------------------------
+        P1			0ms				4ms			4ms			4ms			0
+        P2			1ms				3ms			7ms			6ms			3
+        P3			2ms				1ms			8ms			6ms			5
+        P4			3ms				2ms			10ms			7ms			5
+        P5			4ms				5ms			15ms			11ms			6
+        Average turn around time : 6.8ms
+        Average waiting time : 3.8ms
+        */
+
         sc.close();
     }
 

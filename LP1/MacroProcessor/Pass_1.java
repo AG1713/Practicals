@@ -36,29 +36,27 @@ class Solution {
             }
 
             card = input.readLine();
-//            card.replaceAll("[&,]","");
+            card = card.replace("&","");
             String[] parts = card.split("\\s+");
             // "\\s+" denotes any number of spaces
 
             MNT.write(parts[0] + "\t" + mdtp + "\n");
             MNT.flush();
+            MDT.write(card + "\n");
+            MDT.flush();
+            mdtp++;
 
             temp = new BufferedWriter(new FileWriter("D:\\Avdhoot\\GitHub\\AG1713\\Practicals\\LP1\\MacroProcessor\\ALA_" + parts[0]));
 
             for (int i=1 ; i<parts.length ; i++){
-                if (parts[i].contains("=")){
-                    String[] s = parts[i].split("=");
-                    temp.write(s[0]);
-                    temp.flush();
-                    continue;
-                }
-
+                parts[i] = parts[i].replace(",", "");
                 temp.write(parts[i] + "\n");
                 temp.flush();
             }
 
             while (true) {
                 card = input.readLine();
+                card = card.replace("&","");
                 mdtp++;
 
                 if (card.equals("MEND")){
