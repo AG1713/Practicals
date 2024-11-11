@@ -55,16 +55,21 @@ class RoundRobin{
         ArrayList<CPU_Process> currentProcesses = new ArrayList<>();
         int time = 0;
         int remainingProcesses = this.size;
-        String gant = "";
+        String gant = time + " ";
 
+        for (CPU_Process newProcess : processes){
+            if ((newProcess.arrivalTime <= time) && (newProcess.remainingTime > 0))
+                currentProcesses.add(newProcess);
+        }
         while (remainingProcesses > 0){
-            for (CPU_Process newProcess : processes){
-                if ((newProcess.arrivalTime <= time) && (newProcess.remainingTime > 0) && (!currentProcesses.contains(newProcess)))
-                    currentProcesses.add(newProcess);
-            }
+
 
             if (currentProcesses.isEmpty()) {
                 time += unit;
+                for (CPU_Process newProcess : processes){
+                    if ((newProcess.arrivalTime <= time) && (newProcess.remainingTime > 0) && (!currentProcesses.contains(newProcess)))
+                        currentProcesses.add(newProcess);
+                }
                 continue;
             }
 
@@ -80,7 +85,7 @@ class RoundRobin{
             gant += time + " ";
 
             for (CPU_Process newProcess : processes){
-                if ((newProcess.arrivalTime <= time) && (newProcess.remainingTime > 0) && (!currentProcesses.contains(newProcess)))
+                if ((newProcess.arrivalTime <= time) && (newProcess.remainingTime > 0) && (!currentProcesses.contains(newProcess)) && newProcess != process)
                     currentProcesses.add(newProcess);
             }
 
@@ -94,6 +99,11 @@ class RoundRobin{
                 remainingProcesses--;
             }
 
+            System.out.print(time + " ");
+            for (int i=0 ; i<currentProcesses.size() ; i++){
+                System.out.print(currentProcesses.get(i).name + " ");
+            }
+            System.out.println();
 
         }
 
@@ -127,9 +137,11 @@ class RoundRobin{
                     processes.get(i).turnAroundTime);
             avg_waiting += processes.get(i).waitingTime;
             avg_TAT += processes.get(i).turnAroundTime;
+
         }
-        avg_waiting = avg_waiting/size;
-        avg_TAT = avg_TAT/size;
+
+        avg_waiting = avg_waiting/(float) this.size;
+        avg_TAT = avg_TAT/(float) this.size;
 
         System.out.println("\nAverage waiting time: " + avg_waiting);
         System.out.println("Average turn around time: " + avg_TAT);
