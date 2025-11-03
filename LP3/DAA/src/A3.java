@@ -21,7 +21,7 @@ public class A3 {
         });
 
         double profit = 0;
-        int rem = W;
+        float rem = W;
         int i=0;
 
         while (i<items.length && rem > 0) {
@@ -33,8 +33,6 @@ public class A3 {
             else {
                 double fraction = ((double) rem/(double) items[i].weight);
                 profit += (items[i].value*fraction);
-                rem = 0;
-
                 break;
             }
         }
