@@ -3,20 +3,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
-// Class to represent huffman tree
-class HNode {
-    int freq;
-    Character c;
-    HNode left, right;
-    HNode(Character c, int x) {
-        this.c = c;
-        freq = x;
-        left = null;
-        right = null;
-    }
-}
-
-class Huffman {
+class Practice {
 
     HNode constructHTree(Map<Character, Integer> freqMap) {
         PriorityQueue<HNode> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.freq, o2.freq));
@@ -58,19 +45,19 @@ class Huffman {
 
 }
 
-public class A2 {
+public class Playground {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the string: ");
         String input = sc.nextLine();
 
-        Huffman huffman = new Huffman();
-        Map<Character, Integer> mp = huffman.generateMap(input);
+        Practice p = new Practice();
+        Map<Character, Integer> mp = p.generateMap(input);
         System.out.println("Input map:\n" + mp);
 
         Map<Character, String> output = new HashMap<>();
-        huffman.traverse(huffman.constructHTree(mp), output, "");
+        p.traverse(p.constructHTree(mp), output, "");
         System.out.println("\nOutput: \n" + output);
 
         // Sample input: azdjkqwejaadjjqkzzxqaa
