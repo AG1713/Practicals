@@ -1,46 +1,64 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Practice {
 
-    HNode constructHTree(Map<Character, Integer> freqMap) {
-        PriorityQueue<HNode> pq = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.freq, o2.freq));
-
-        for (Map.Entry<Character, Integer> entry : freqMap.entrySet()) {
-            pq.offer(new HNode(entry.getKey(), entry.getValue()));
+    void displayBoard(char[][] board, int n) {
+        for (int i=0 ; i<n ; i++) {
+            for (int j=0 ; j<n ; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
         }
-
-        while (pq.size() > 1) {
-            HNode first = pq.poll();
-            HNode second = pq.poll();
-
-            HNode newNode = new HNode(null, first.freq + second.freq);
-            newNode.left = first;
-            newNode.right = second;
-            pq.offer(newNode);
-        }
-
-        return pq.poll();
     }
 
-    void traverse(HNode node, Map<Character, String> codes, String code) {
-        if (node == null) return;
-        if (node.left == null && node.right == null) {
-            codes.put(node.c, code);
-            return;
+    boolean isSafe(char[][] board, int n, int row, int col) {
+        // Checking column
+        for (int i=0 ; i<n ; i++) {
+            if (board[i][col] == 'Q') return false;
         }
-        traverse(node.left, codes, code + '0');
-        traverse(node.right, codes, code + '1');
+
+        // upper-left diagonal
+        for (int i = row-1, j = col-1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 'Q') return false;
+        }
+
+        // lower-left diagonal
+        for (int i = row+1, j = col-1; i < n && j >= 0; i++, j--) {
+            if (board[i][j] == 'Q') return false;
+        }
+
+        // upper-right diagonal
+        for (int i = row-1, j = col+1; i >= 0 && j < n; i--, j++) {
+            if (board[i][j] == 'Q') return false;
+        }
+
+        // lower-right diagonal
+        for (int i = row+1, j = col+1; i < n && j < n; i++, j++) {
+            if (board[i][j] == 'Q') return false;
+        }
+
+        return true;
     }
 
-    Map<Character, Integer> generateMap(String input) {
-        Map<Character, Integer> ans = new HashMap<>();
-        for (char c : input.toCharArray()) {
-            ans.put(c, ans.getOrDefault(c, 0) + 1);
+    boolean solveNQueens(char[][] board, int n, int row) {
+        if (row == n) return true;
+
+        // Check if there is already a queen on the current row
+        for (int col=0 ; col<n ; col++) {
+            if (board[row][col] == 'Q') return solveNQueens(board, n, row+1);
         }
-        return ans;
+
+        // Normal
+        for (int col=0 ; col<n ; col++) {
+            if (isSafe(board, n, row, col)) {
+                board[row][col] = 'Q';
+
+                if (solveNQueens(board, n, row+1)) return true;
+                board[row][col] = '-';
+            }
+        }
+        return false;
     }
 
 }
@@ -49,18 +67,39 @@ public class Playground {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter the string: ");
-        String input = sc.nextLine();
+        System.out.print("Enter n: ");
+        int n = sc.nextInt();
+
+        if (n <= 0) System.out.println("Invalid input");
+
+        char[][] board = new char[n][n];
+        for (int i=0 ; i<n ; i++) {
+            char[] arr = new char[n];
+            Arrays.fill(arr, '-');
+            board[i] = arr;
+        }
+
+        System.out.println("Indexes are 1-based...");
+        System.out.print("First queen row: ");
+        int i = sc.nextInt();
+        System.out.print("First queen column: ");
+        int j = sc.nextInt();
 
         Practice p = new Practice();
-        Map<Character, Integer> mp = p.generateMap(input);
-        System.out.println("Input map:\n" + mp);
 
-        Map<Character, String> output = new HashMap<>();
-        p.traverse(p.constructHTree(mp), output, "");
-        System.out.println("\nOutput: \n" + output);
+        if (i>n || j>n || i<=0 || j<=0) {
+            System.out.println("Invalid inputs");
+        }
+        else {
+            board[i-1][j-1] = 'Q';
 
-        // Sample input: azdjkqwejaadjjqkzzxqaa
-        // Sample output: {a=01, q=110, d=1111, e=11100, w=11101, x=1000, j=00, z=101, k=1001}
+            if (p.solveNQueens(board, n, 0)) {
+                p.displayBoard(board, n);
+            } else {
+                System.out.println("No valid solution");
+            }
+        }
+
+
     }
 }
