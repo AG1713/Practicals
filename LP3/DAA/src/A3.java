@@ -51,7 +51,7 @@ public class A3 {
             System.out.print("Enter profit for item " + (i+1) + ": ");
             int val = sc.nextInt();
             System.out.print("Enter weight for item " + (i+1) + ": ");
-            float w = sc.nextFloat();
+            int w = sc.nextInt();
             items[i] = new Item(val, w);
         }
 
