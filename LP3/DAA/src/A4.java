@@ -10,7 +10,7 @@ class DP {
         int n = items.length;
         int[][] dp = new int[n + 1][W + 1]; // dp[i][w] = max value using first i items and capacity w
 
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             for (int w = 0; w <= W; w++) {
                 if (i == 0 || w == 0)
                     dp[i][w] = 0;
@@ -115,6 +115,7 @@ public class A4 {
     public static void main(String[] args) {
 
         int W = 10;
+        int W1 = 10;
         Item[] items = {
                 new Item(40, 2),
                 new Item(50, 3.14f),
@@ -122,12 +123,23 @@ public class A4 {
                 new Item(95, 5),
                 new Item(30, 3)
         };
+
+        Item[] items1 = {
+                new Item(40, 2),
+                new Item(50, 3),
+                new Item(100, 1),
+                new Item(95, 5),
+                new Item(30, 3),
+        };
+
         int n = items.length;
+        int n1 = 3;
 
         DP dp = new DP();
         BranchBoundKnapsack bb = new BranchBoundKnapsack();
 
         System.out.println("Maximum possible profit using DP = " + dp.knapsack(W, items));
+        System.out.println("Maximum possible profit using DP = " + dp.knapsack(W1, items1));
         System.out.println("Maximum possible profit using BB = " + bb.knapsack(W, items, n));
 
     }
