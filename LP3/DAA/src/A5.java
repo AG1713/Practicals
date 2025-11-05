@@ -85,7 +85,7 @@ public class A5 {
         System.out.print("First queen column: ");
         int j = sc.nextInt();
 
-        Practice q = new Practice();
+        NQueens q = new NQueens();
 
         if (i>n || j>n || i<=0 || j<=0) {
             System.out.println("Invalid inputs");
