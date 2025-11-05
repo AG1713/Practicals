@@ -38,7 +38,7 @@ contract StudentData {
     }
 
     // Get student details
-    function getStudent(uint _id) public view returns (uint, string memory, uint[] memory, uint) {
+    function getStudent(uint _id) public view returns (uint id, string memory, uint[] memory, uint) {
         require(students[_id].exists, "Student does not exist");
         Student memory s = students[_id];
         return (s.id, s.name, s.marks, s.percentage);
@@ -50,12 +50,7 @@ contract StudentData {
     }
 
     // Fallback function to catch unexpected calls or Ether
-    fallback() external payable {
-        fallbackCalled += 1;
-    }
-
-    // Receive function for plain Ether transfer
-    receive() external payable {
+    fallback() external {
         fallbackCalled += 1;
     }
 }
