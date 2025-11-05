@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Scanner;
 
 class DP {
 
@@ -22,11 +23,6 @@ class DP {
             }
         }
         return dp[n][W];
-    }
-
-    int knapsack(int W, Item[] items) {
-        int n = items.length;
-        return knapsackDP(W, items);
     }
 
 }
@@ -114,33 +110,29 @@ class BranchBoundKnapsack {
 public class A4 {
     public static void main(String[] args) {
 
-        int W = 10;
-        int W1 = 10;
-        Item[] items = {
-                new Item(40, 2),
-                new Item(50, 3.14f),
-                new Item(100, 1.98f),
-                new Item(95, 5),
-                new Item(30, 3)
-        };
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the capacity of Knapsack: ");
+        int W = sc.nextInt();
+        System.out.print("Enter the number of items: ");
+        int n = sc.nextInt();
 
-        Item[] items1 = {
-                new Item(40, 2),
-                new Item(50, 3),
-                new Item(100, 1),
-                new Item(95, 5),
-                new Item(30, 3),
-        };
-
-        int n = items.length;
-        int n1 = 3;
+        Item[] items = new Item[n];
+        for (int i=0 ; i<n ; i++) {
+            System.out.print("Enter profit for item " + (i+1) + ": ");
+            int val = sc.nextInt();
+            System.out.print("Enter weight for item " + (i+1) + ": ");
+            float w = sc.nextFloat();
+            items[i] = new Item(val, w);
+        }
 
         DP dp = new DP();
-        BranchBoundKnapsack bb = new BranchBoundKnapsack();
+        System.out.println("\nMaximum profit using Dynamic Programming: " + dp.knapsackDP(W, items));
 
-        System.out.println("Maximum possible profit using DP = " + dp.knapsack(W, items));
-        System.out.println("Maximum possible profit using DP = " + dp.knapsack(W1, items1));
-        System.out.println("Maximum possible profit using BB = " + bb.knapsack(W, items, n));
+
+        sc.close();
+
+        // Sample input: 10 5 40 2 50 3 100 1 95 5 30 3
+        // Sample input's answer: 245
 
     }
 }

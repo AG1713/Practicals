@@ -2,14 +2,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 
-public class A3 {
-
-    private static double fractionalKnapsack(int[] values, float[] weights, int W) {
-        Item[] items = new Item[values.length];
-
-        for (int i=0 ; i<values.length ; i++) {
-            items[i] = new Item(values[i], weights[i]);
-        }
+class FractionalKnapsack {
+    public double knapsack(int W, Item[] items) {
 
         Arrays.sort(items, new Comparator<Item>() {
             public int compare(Item a, Item b) {
@@ -40,28 +34,32 @@ public class A3 {
         return profit;
     }
 
+}
+
+public class A3 {
+
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the capacity of Knapsack: ");
+        int W = sc.nextInt();
+        System.out.print("Enter the number of items: ");
         int n = sc.nextInt();
-        int[] val = new int[n];
-        float[] wt = new float[n];
 
-        System.out.println("Enter values: ");
+        Item[] items = new Item[n];
         for (int i=0 ; i<n ; i++) {
-            val[i] = sc.nextInt();
+            System.out.print("Enter profit for item " + (i+1) + ": ");
+            int val = sc.nextInt();
+            System.out.print("Enter weight for item " + (i+1) + ": ");
+            float w = sc.nextFloat();
+            items[i] = new Item(val, w);
         }
 
-        System.out.println("Enter weights: ");
-        for (int i=0 ; i<n ; i++) {
-            wt[i] = sc.nextFloat();
-        }
+        FractionalKnapsack kp = new FractionalKnapsack();
 
-        System.out.println("Maximum profit: " + fractionalKnapsack(val, wt, n));
-        // Sample input
-        // 3
-        // 60 100 120
-        // 10 20 30
+        System.out.println("\nMaximum profit: " + kp.knapsack(W, items));
+        // Sample input: 10 5 40 2 50 3 100 1 95 5 30 3
+        // Sample input's output: 268.3333...
 
 
     }
